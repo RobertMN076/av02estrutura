@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Árvore de Dependências</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <h1>Árvore de Dependências de Projeto</h1>
+
+        <div class="controls">
+            <form id="task-form">
+                <input type="text" id="task-name" placeholder="Nome da nova tarefa" required />
+                <select id="task-dependency">
+                    <option value="">Sem dependência (raiz)</option>
+                </select>
+                <button type="submit">Adicionar Tarefa</button>
+            </form>
+            <button id="post-order-btn">Calcular Ordem de Execução (Pós-Ordem)</button>
+        </div>
+        
+        <div id="tree-container">
+            <svg id="connector-svg"></svg>
+            </div>
+
+        <div id="result-container">
+            <h2>Ordem de Execução:</h2>
+            <p id="result-output">A ordem aparecerá aqui...</p>
+        </div>
+    </div>
+    
+    <script src="main.js" defer></script>
+</body>
+</html>
