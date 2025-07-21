@@ -175,14 +175,42 @@ form.addEventListener('submit', (e) => {
     }
 });
 
+// NOVO CÓDIGO - SUBSTITUA A SEÇÃO ACIMA POR ESTA
+
+// Função auxiliar recursiva para gerar a string com indentação
+function generateHierarchyText(node: TaskNode, level: number): string {
+    // Adiciona o nó atual com a indentação correta
+    let output = " ".repeat(level * 2) + "- " + node.name + "\n";
+    
+    // Chama a função recursivamente para cada filho, aumentando o nível de indentação
+    for (const child of node.children) {
+        output += generateHierarchyText(child, level + 1);
+    }
+    
+    return output;
+}
+
+// Event Listener atualizado para o botão
 postOrderBtn.addEventListener('click', () => {
-    const postOrderResult = tree.postOrderTraversal();
+    let fullHierarchyText = "";
     
-    // CORREÇÃO 2: Inverter o resultado para obter a ordem de execução correta
-    const executionOrder = postOrderResult.reverse();
-    
-    const resultNames = executionOrder.map(node => node.name).join(' → ');
-    resultOutput.textContent = resultNames || "Nenhuma tarefa para exibir.";
+    // Encontra os nós raiz (início das árvores)
+    const roots = Array.from(tree.nodes.values()).filter(node => {
+        return !Array.from(tree.nodes.values()).some(p => p.children.includes(node));
+    });
+
+    if (roots.length === 0) {
+        resultOutput.textContent = "Nenhuma tarefa para exibir.";
+        return;
+    }
+
+    // Gera o texto hierárquico para cada árvore/ramificação
+    roots.forEach(root => {
+        fullHierarchyText += generateHierarchyText(root, 0);
+    });
+
+    // Para manter a aparência de "bloco de código", usamos a tag <pre>
+    resultOutput.innerHTML = `<pre>${fullHierarchyText}</pre>`;
 });
 
 window.addEventListener('resize', renderTree);

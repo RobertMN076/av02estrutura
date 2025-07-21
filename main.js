@@ -150,12 +150,35 @@ form.addEventListener('submit', function (e) {
         renderTree();
     }
 });
+// NOVO CÓDIGO - SUBSTITUA A SEÇÃO ACIMA POR ESTA
+// Função auxiliar recursiva para gerar a string com indentação
+function generateHierarchyText(node, level) {
+    // Adiciona o nó atual com a indentação correta
+    var output = " ".repeat(level * 2) + "- " + node.name + "\n";
+    // Chama a função recursivamente para cada filho, aumentando o nível de indentação
+    for (var _i = 0, _a = node.children; _i < _a.length; _i++) {
+        var child = _a[_i];
+        output += generateHierarchyText(child, level + 1);
+    }
+    return output;
+}
+// Event Listener atualizado para o botão
 postOrderBtn.addEventListener('click', function () {
-    var postOrderResult = tree.postOrderTraversal();
-    // CORREÇÃO 2: Inverter o resultado para obter a ordem de execução correta
-    var executionOrder = postOrderResult.reverse();
-    var resultNames = executionOrder.map(function (node) { return node.name; }).join(' → ');
-    resultOutput.textContent = resultNames || "Nenhuma tarefa para exibir.";
+    var fullHierarchyText = "";
+    // Encontra os nós raiz (início das árvores)
+    var roots = Array.from(tree.nodes.values()).filter(function (node) {
+        return !Array.from(tree.nodes.values()).some(function (p) { return p.children.includes(node); });
+    });
+    if (roots.length === 0) {
+        resultOutput.textContent = "Nenhuma tarefa para exibir.";
+        return;
+    }
+    // Gera o texto hierárquico para cada árvore/ramificação
+    roots.forEach(function (root) {
+        fullHierarchyText += generateHierarchyText(root, 0);
+    });
+    // Para manter a aparência de "bloco de código", usamos a tag <pre>
+    resultOutput.innerHTML = "<pre>".concat(fullHierarchyText, "</pre>");
 });
 window.addEventListener('resize', renderTree);
 renderTree();
