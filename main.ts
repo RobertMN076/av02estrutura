@@ -1,4 +1,3 @@
-// main.ts (Completo e Modificado para Pós-Ordem Linear)
 
 class TaskNode {
     id: string;

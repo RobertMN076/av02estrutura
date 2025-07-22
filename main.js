@@ -1,4 +1,4 @@
-// main.ts (Completo e Modificado para Pós-Ordem Linear)
+
 var TaskNode = /** @class */ (function () {
     function TaskNode(name) {
         this.children = [];
