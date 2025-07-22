@@ -1,4 +1,4 @@
-// main.ts (Versão Corrigida)
+// main.ts (Completo e Modificado para Pós-Ordem Linear)
 
 class TaskNode {
     id: string;
@@ -47,12 +47,10 @@ class DependencyTree {
             result.push(node);
         };
 
-        // Encontra todos os nós que não são filhos de ninguém (as raízes)
         const roots = Array.from(this.nodes.values()).filter(node => {
             return !Array.from(this.nodes.values()).some(p => p.children.includes(node));
         });
 
-        // Inicia o percurso a partir de cada raiz
         roots.forEach(root => {
             if (!visited.has(root.id)) {
                 traverse(root);
@@ -74,27 +72,20 @@ const svgConnectors = document.getElementById('connector-svg') as unknown as SVG
 const postOrderBtn = document.getElementById('post-order-btn') as HTMLButtonElement;
 const resultOutput = document.getElementById('result-output') as HTMLParagraphElement;
 
-// CORREÇÃO 1: Lógica de renderização e posicionamento robusta
-// Esta função irá limpar e redesenhar TUDO a cada chamada, garantindo que a árvore esteja sempre correta.
 function renderTree() {
-    // 1. Limpa a visualização atual
     treeContainer.querySelectorAll('.task-node').forEach(el => el.remove());
     svgConnectors.innerHTML = '';
 
-    // 2. Encontra todos os nós raiz atuais (aqueles sem pai)
     const roots = Array.from(tree.nodes.values()).filter(node => {
         return !Array.from(tree.nodes.values()).some(p => p.children.includes(node));
     });
 
-    // 3. Calcula as posições de todos os nós, começando pelas raízes
     const containerWidth = treeContainer.offsetWidth;
     const initialX = containerWidth / (roots.length + 1);
     roots.forEach((root, index) => {
-        // Espalha as árvores raiz horizontalmente
         positionNode(root, (index + 1) * initialX, 60, containerWidth / (roots.length + 1));
     });
     
-    // 4. Cria os elementos DOM para todos os nós e os posiciona
     tree.nodes.forEach(node => {
         const nodeEl = document.createElement('div');
         nodeEl.className = 'task-node';
@@ -103,28 +94,24 @@ function renderTree() {
         nodeEl.style.left = `${node.x}px`;
         nodeEl.style.top = `${node.y}px`;
         
-        node.element = nodeEl; // Salva a referência ao elemento
+        node.element = nodeEl;
         treeContainer.appendChild(nodeEl);
     });
 
-    // 5. Desenha os conectores entre os nós já posicionados
     drawConnectors();
 }
 
-// Função auxiliar recursiva para definir as coordenadas (x, y) de cada nó
 function positionNode(node: TaskNode, x: number, y: number, horizontalSpread: number) {
     node.x = x;
     node.y = y;
     
     const totalChildren = node.children.length;
-    // O spread para os filhos diretos deste nó
     const childSpread = horizontalSpread * 0.8;
-    // O ponto de partida para o primeiro filho
     const startX = x - (totalChildren - 1) * childSpread / 2;
 
     node.children.forEach((child, index) => {
         const childX = startX + index * childSpread;
-        const childY = y + 100; // Espaçamento vertical fixo
+        const childY = y + 100;
         positionNode(child, childX, childY, childSpread / totalChildren);
     });
 }
@@ -134,12 +121,12 @@ function drawConnectors() {
         if (!parent.element) return;
         
         const startX = parent.x;
-        const startY = parent.y + parent.element.offsetHeight / 2 - 15; // Ajuste para sair do meio do nó
+        const startY = parent.y + parent.element.offsetHeight / 2 - 15;
 
         parent.children.forEach(child => {
             if (!child.element) return;
             const endX = child.x;
-            const endY = child.y - child.element.offsetHeight / 2; // Ajuste para chegar no topo do nó
+            const endY = child.y - child.element.offsetHeight / 2;
 
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line.setAttribute('x1', startX.toString());
@@ -175,42 +162,19 @@ form.addEventListener('submit', (e) => {
     }
 });
 
-// NOVO CÓDIGO - SUBSTITUA A SEÇÃO ACIMA POR ESTA
-
-// Função auxiliar recursiva para gerar a string com indentação
-function generateHierarchyText(node: TaskNode, level: number): string {
-    // Adiciona o nó atual com a indentação correta
-    let output = " ".repeat(level * 2) + "- " + node.name + "\n";
-    
-    // Chama a função recursivamente para cada filho, aumentando o nível de indentação
-    for (const child of node.children) {
-        output += generateHierarchyText(child, level + 1);
-    }
-    
-    return output;
-}
-
-// Event Listener atualizado para o botão
+// Event Listener para exibir a lista em Pós-Ordem
 postOrderBtn.addEventListener('click', () => {
-    let fullHierarchyText = "";
+    // 1. Executa o percurso em Pós-Ordem para obter a lista de nós.
+    const postOrderResult = tree.postOrderTraversal();
     
-    // Encontra os nós raiz (início das árvores)
-    const roots = Array.from(tree.nodes.values()).filter(node => {
-        return !Array.from(tree.nodes.values()).some(p => p.children.includes(node));
-    });
-
-    if (roots.length === 0) {
-        resultOutput.textContent = "Nenhuma tarefa para exibir.";
-        return;
-    }
-
-    // Gera o texto hierárquico para cada árvore/ramificação
-    roots.forEach(root => {
-        fullHierarchyText += generateHierarchyText(root, 0);
-    });
-
-    // Para manter a aparência de "bloco de código", usamos a tag <pre>
-    resultOutput.innerHTML = `<pre>${fullHierarchyText}</pre>`;
+    // 2. Mapeia a lista de nós para uma lista de apenas os nomes.
+    const resultNames = postOrderResult.map(node => node.name);
+    
+    // 3. Junta os nomes em uma única string, separados por setas.
+    const displayText = resultNames.join(' → ');
+    
+    // 4. Exibe o resultado final na tela.
+    resultOutput.textContent = displayText || "Nenhuma tarefa para exibir.";
 });
 
 window.addEventListener('resize', renderTree);
