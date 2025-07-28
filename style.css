@@ -1,76 +1,150 @@
 /* style.css */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+    --primary-color: #4A90E2;
+    --secondary-color: #8BC34A;
+    --background-light: #F0F2F5;
+    --surface-light: #FFFFFF;
+    --text-dark: #333333;
+    --text-light: #666666;
+    --border-color: #E0E0E0;
+    --node-bg: #FFF3E0;
+    --node-border: #FFB74D;
+    --shadow-light: rgba(0, 0, 0, 0.1);
+}
+
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f9;
-    color: #333;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-light);
+    color: var(--text-dark);
     display: flex;
     justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
     margin: 0;
-    padding: 20px;
+    padding: 30px 20px;
+    box-sizing: border-box;
 }
 
 #app {
-    width: 90%;
+    width: 95%;
     max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+h1 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 25px;
+    font-weight: 600;
 }
 
 .controls {
-    background-color: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    margin-bottom: 20px;
+    background-color: var(--surface-light);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px var(--shadow-light);
     display: flex;
+    flex-wrap: wrap;
     gap: 20px;
     align-items: center;
+    justify-content: center;
 }
 
 #task-form {
     display: flex;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 15px;
+    flex-grow: 1;
+    justify-content: center;
 }
 
-input, select, button {
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 16px;
+input[type="text"], 
+select {
+    flex: 1;
+    min-width: 180px;
+    padding: 12px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--text-dark);
+    transition: all 0.3s ease;
+    background-color: var(--background-light);
+}
+
+input[type="text"]:focus, 
+select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.2);
+    outline: none;
+    background-color: var(--surface-light);
 }
 
 button {
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
+    padding: 12px 25px;
     border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-button:hover {
-    background-color: #0056b3;
+button[type="submit"] {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+button[type="submit"]:hover {
+    background-color: #3A7ECF;
+    transform: translateY(-2px);
+}
+
+#post-order-btn {
+    background-color: var(--secondary-color);
+    color: white;
+    margin-left: 20px;
+}
+
+#post-order-btn:hover {
+    background-color: #6DAF35;
+    transform: translateY(-2px);
 }
 
 #tree-container {
     position: relative;
     width: 100%;
-    height: 500px;
-    background-color: #fff;
-    border: 1px dashed #ccc;
-    border-radius: 8px;
+    min-height: 500px;
+    background-color: var(--surface-light);
+    border: 1px dashed var(--border-color);
+    border-radius: 12px;
     overflow: auto;
+    box-shadow: 0 4px 12px var(--shadow-light);
 }
 
 .task-node {
     position: absolute;
-    background-color: #ffe0b2;
-    border: 2px solid #fb8c00;
-    border-radius: 8px;
-    padding: 15px 25px;
+    background-color: var(--node-bg);
+    border: 2px solid var(--node-border);
+    border-radius: 10px;
+    padding: 18px 30px;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    cursor: default;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+    cursor: grab;
     user-select: none;
-    min-width: 120px;
-    /* Centraliza o ponto de transformação para o layout */
-    transform: translate(-50%, -50%); 
+    min-width: 140px;
+    transform: translate(-50%, -50%);
+    font-weight: 500;
+    color: var(--text-dark);
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.task-node:hover {
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    transform: translate(-50%, -50%) scale(1.02);
 }
 
 #connector-svg {
@@ -83,14 +157,53 @@ button:hover {
 }
 
 .connector {
-    stroke: #666;
-    stroke-width: 2px;
+    stroke: var(--text-light);
+    stroke-width: 2.5px;
     fill: none;
 }
 
 #result-container {
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #e9f5e9;
-    border-left: 5px solid #4caf50;
+    margin-top: 25px;
+    padding: 25px;
+    background-color: #E6F0F8;
+    border-left: 5px solid var(--primary-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px var(--shadow-light);
+}
+
+#result-container h2 {
+    color: var(--primary-color);
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+#result-output {
+    font-size: 1.1rem;
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    #task-form {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    input[type="text"], 
+    select,
+    button {
+        width: 100%;
+        min-width: unset;
+    }
+
+    #post-order-btn {
+        margin-left: 0;
+        margin-top: 15px;
+    }
 }
