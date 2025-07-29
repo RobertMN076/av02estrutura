@@ -1,4 +1,3 @@
-
 class TaskNode {
     id: string;
     name: string;
@@ -60,7 +59,6 @@ class DependencyTree {
     }
 }
 
-// --- Lógica da Aplicação ---
 const tree = new DependencyTree();
 
 const form = document.getElementById('task-form') as HTMLFormElement;
@@ -161,18 +159,11 @@ form.addEventListener('submit', (e) => {
     }
 });
 
-// Event Listener para exibir a lista em Pós-Ordem
 postOrderBtn.addEventListener('click', () => {
-    // 1. Executa o percurso em Pós-Ordem para obter a lista de nós.
     const postOrderResult = tree.postOrderTraversal();
-    
-    // 2. Mapeia a lista de nós para uma lista de apenas os nomes.
     const resultNames = postOrderResult.map(node => node.name);
-    
-    // 3. Junta os nomes em uma única string, separados por setas.
     const displayText = resultNames.join(' → ');
     
-    // 4. Exibe o resultado final na tela.
     resultOutput.textContent = displayText || "Nenhuma tarefa para exibir.";
 });
 
